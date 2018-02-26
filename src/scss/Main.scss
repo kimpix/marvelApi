@@ -1,0 +1,382 @@
+.board {
+    @include tab() {
+        flex-flow: row wrap;
+        justify-content: inherit;
+    }
+    background-image: linear-gradient(to right top, #131143, #500455, #8b0051, #bc0039, #d80202);
+    display: flex;
+    justify-content: space-around;
+    height: 700px;
+    width: 100%;
+    overflow: hidden;
+    a {
+        display: block;
+        width: 100%;
+        height: 40px;
+    }
+
+    .left-column, .right-column {
+        @include tab() {
+            width: 100%;
+        }
+        width: 50%;
+        border-radius: 15px;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.3);
+        margin-top: 100px;
+
+    }
+
+    .right-column {
+        @include tab() {
+            width: 100%;
+            margin-top: 90px;
+        }
+
+        width: 70%;
+        background-color: transparent;
+        color: white;
+        margin-top: 140px;
+        position: relative;
+
+        h4, p {
+            @include laptop() {
+                margin-left: 18px;
+            }
+            @include tab-portrait() {
+                margin-left: 45px;
+            }
+            width: 300px;
+            margin-left: 100px;
+            text-align: center;
+        }
+
+        .description {
+            @include laptop() {
+                margin-left: 18px;
+            }
+
+            width: 300px;
+            margin-left: 20%;
+            text-align: center;
+        }
+
+        .instruction {
+            @include tab() {
+                margin: 0 auto;
+                margin-top: 80px;
+            }
+            margin-left: 30%;
+            margin-top: 200px;
+        }
+    }
+
+    .flip-it {
+
+        animation-name: flip-it;
+        animation-duration: 1s;
+
+        @keyframes flip-it {
+            from {
+                -webkit-transform: rotateY(180deg);
+                -moz-transform: rotateY(180deg);
+                -o-transform: rotateY(180deg);
+                transform: rotateY(180deg);
+            }
+            to {
+                -webkit-transform: rotateY(0deg);
+                -moz-transform: rotateY(0deg);
+                -o-transform: rotateY(0deg);
+                transform: rotateY(0deg);
+            }
+        }
+    }
+
+    .left-column {
+        @include laptop() {
+            margin-left: 4%;
+        }
+        @include tab() {
+            width: 100%;
+            height: 218px;
+            margin-top: 0;
+            margin-left: 0;
+            border-radius: 0;
+        }
+        width: 330px;
+        height: 500px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        margin-left: 10%;
+        border-radius: 15px 0 15px 15px;
+
+        h3 {
+            @include tab() {
+                width: 100%;
+                border-radius: 0;
+            }
+            width: 331px;
+            border-radius: 15px 0 0 0;
+            background-color: #222222;
+            color: white;
+            margin-top: 0;
+            padding: 10px 5px 10px 5px;
+            box-sizing: border-box;
+            position: fixed;
+
+            .title-buttons {
+                float: right;
+            }
+        }
+
+        ul {
+            padding-left: 0;
+            padding-top: 30px;
+        }
+
+        li {
+            list-style-type: none;
+            width: 100%;
+            display: block;
+            border-bottom: 1px dotted purple;
+            float: left;
+            padding-left: 15px;
+            padding-top: 10px;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.4);
+            }
+        }
+        .female-character {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: orange;
+            color: orangered;
+            margin-right: 10px;
+            margin-top: 10px;
+            float: left;
+        }
+
+        .male-character {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #E3002D;
+            color: white;
+            margin-right: 10px;
+            margin-top: 10px;
+            padding: 7px 10px 10px 7px;
+            float: left;
+        }
+
+        .character-name {
+            padding-top: 16px;
+            display: block;
+            float: left;
+            height: 100%;
+            width: 75%;
+        }
+    }
+}
+
+.image-container {
+    @include laptop() {
+        width: 200px;
+        height: 200px;
+        margin-left: 60px;
+    }
+
+    @include tab-portrait() {
+        width: 230px;
+        height: 230px;
+        margin-left: 80px;
+    }
+
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin-left: 100px;
+
+    img {
+        height: 150%;
+    }
+}
+
+.links {
+    &:hover {
+        color: black;
+    }
+    &:link {
+        color: black;
+    }
+    &:visited {
+        color: black;
+    }
+}
+
+.fight-button {
+    @include laptop() {
+        font-size: 20px;
+    }
+    @include tab() {
+        margin: 60px auto 0 23px;
+    }
+
+    @include tab-portrait() {
+        font-size: 25px;
+    }
+    outline: none;
+    float: left;
+    position: absolute;
+    margin: 60px auto 0;
+    font-size: 35px;
+    margin-top: 102px;
+    padding: 15px;
+    border-bottom: 7px solid white;
+    border-left: 3px solid white;
+    border-top: 1px solid white;
+    border-right: 1px solid white;
+    color: white;
+    background-color: transparent;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+    }
+
+    &:active {
+        @include tab() {
+            margin-top: 67px;
+        }
+        border-bottom: 1px solid white;
+        margin-top: 108px;
+    }
+
+    &.random {
+        @include laptop() {
+
+        }
+
+    }
+
+    &.again {
+        @include laptop() {
+        }
+
+    }
+}
+
+.adversary {
+    @include laptop() {
+        left: 73%;
+    }
+    @include tab-portrait() {
+        margin-left: 0;
+    }
+    float: left;
+    margin-left: 50px;
+}
+
+.fighter-one {
+}
+
+.fighter-one-container {
+    position: relative;
+    width: 40%;
+    float: left;
+}
+
+.adversary-container {
+    @include tab-portrait() {
+        margin-left: 140px;
+    }
+    position: relative;
+    margin-left: 100px;
+    height: 500px;
+    float: left;
+}
+
+.hero-score {
+    @include laptop() {
+        left: 130px;
+        top: -60px;
+    }
+    @include tab-portrait() {
+        left: 195px
+    }
+    @include tab-portrait() {
+        left: 165px
+    }
+    left: 219px;
+    top: -60px;
+    font-size: 50px;
+    position: absolute;
+}
+
+.adversary-score {
+    @include laptop() {
+        left: 180px;
+        top: -60px;
+    }
+    @include tab-portrait() {
+        left: 195px
+    }
+    @include tab-portrait() {
+        left: 165px
+    }
+    left: 272px;
+    top: -60px;
+    font-size: 50px;
+    position: absolute;
+}
+
+.win-message {
+    text-align: left;
+    padding-left: 5px;
+}
+
+.hide {
+    display: none;
+}
+
+.loading {
+    height: 700px;
+    width: 300px;
+    margin: 0 auto;
+    display: block;
+
+    p {
+        display: block;
+        color: #B50038;
+        margin-left: 40px;
+        margin-top: 320px;
+        font-size: 25px;
+        font-weight: bold;
+    }
+}
+
+.score {
+    @include tab-portrait() {
+        margin-right: 3%;
+    }
+    float: right;
+    margin-right: 6%;
+    color: white;
+    font-size: 22px;
+    margin-top: 14px;
+    display: block;
+}
+
+.modal-close__button {
+    outline: none;
+    background-color: #BB0030;
+    color: white;
+    cursor: pointer;
+}
+
+
+.button-container {
+    float:left;
+}

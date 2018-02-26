@@ -1,0 +1,40 @@
+
+@mixin tab() {
+    @media (min-width: 768px) and (max-width: 1237px) {
+        @content;
+    }
+}
+
+
+@mixin tab-portrait() {
+    @media (min-width: 768px) and (max-width: 1110px) {
+        @content;
+    }
+}
+
+@mixin small-tab() {
+    @media (min-width: 768px) and (max-width: 1090px) {
+        @content;
+    }
+}
+
+@mixin gt-tab() {
+    @media (min-width: 768px) {
+        @content;
+    }
+}
+
+@mixin laptop() {
+    @media (min-width: 1238px) and (max-width: 1650px) {
+        @content;
+    }
+}
+
+@mixin desktop() {
+    @media (min-width: 1730px) {
+        @content;
+    }
+}
+
+
+
