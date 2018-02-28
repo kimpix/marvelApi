@@ -96,7 +96,23 @@ const Paragraph = (props) => {
 
 class Footer extends Component {
     render() {
-        return (<footer>{this.props.children}</footer>)
+        return (<footer></footer>)
+    }
+}
+
+class CharacterList extends Component {
+    render() {
+        return (
+                <section className="left-column">
+                    <h3>{this.props.title}
+                        <Button onClick={this.props.buttonNext} class="title-buttons" button="Next >>"/>
+                        <Button onClick={this.props.buttonPrev} class="title-buttons" button="<< Prev"/>
+                    </h3>
+                    <ul>
+                        {this.props.children}
+                    </ul>
+                </section>
+                )
     }
 }
 
@@ -106,13 +122,141 @@ const Button = (props) => {
     )
 };
 
-class Board extends Component {
-    constructor(props) {
+class CharactersComponent extends Component {
+   constructor(props) {
         super(props);
         this.state = {
             requestFailed: false,
             offset: 0,
             pending: true,
+            data: ''
+        }
+    }
+
+    componentDidMount() {
+         this.fetchInitial();
+    }
+
+
+    fetchInitial() {
+        let urlInitial = 'http://gateway.marvel.com/v1/public/characters?limit=26&apikey=c1ac14a35052a29503518fe883970ac7';
+         fetch(urlInitial)
+            .then(response => {
+                if (!response.ok) {
+                    throw Error("Network request failed")
+                }
+                return response;
+            })
+            .then(d => d.json())
+            .then(d => {
+                this.setState({
+                    data: d,
+                    pending: false
+                })
+            }, () => {
+                this.setState({
+                    requestFailed: true
+                })
+            })
+        }
+
+    goTo(direction) {
+      let parameter = (direction === 'prev') ? (this.state.offset < 26 ? this.state.offset : this.state.offset - 26 ): this.state.offset + 26;
+      let urlGoTO = `http://gateway.marvel.com/v1/public/characters?limit=26&offset=${parameter}}&apikey=c1ac14a35052a29503518fe883970ac7`;
+
+      return () => {
+            this.setState({
+                offset: parameter,
+                pending: true,
+                fighting: false,
+                heroWin: 0,
+                computerWin: 0,
+                characterPending: true,
+                adversaryPending: true,
+                reset: true,
+                randomHero: 0,
+                randomAdversary: 0,
+            });
+
+            fetch(urlGoTO)
+              .then(response => {
+                  if (!response.ok) {
+                      throw Error("Network request failed")
+                  }
+                  return response;
+              })
+              .then(d => d.json())
+              .then(d => {
+                  this.setState({
+                      data: d,
+                      pending: false,
+                      fighting: false,
+                      computerWin: null,
+                      characterPending: true,
+                      adversaryPending: true,
+                      reset: true,
+                      heroWin: 0,
+                      randomHero: 0,
+                      randomAdversary: 0
+                  })
+              }, () => {
+                  this.setState({
+                      requestFailed: true
+                  })
+              })
+        }
+    }
+
+    render() {
+
+
+        if (this.state.requestFailed) {
+          <CharacterList title="Liste des personnages" buttonPrev={this.goTo('prev')} buttonNext={this.goTo('next')}>
+              <p> Failed !</p>;
+          </CharacterList>
+        }
+        if (this.state.pending) {
+            return (
+              <CharacterList title="Liste des personnages" buttonPrev={this.goTo('prev')} buttonNext={this.goTo('next')}>
+                  <div className="loading"><p>..loading...</p>
+                      <div className="lds-interwind">
+                      <div>  </div>
+                      <div>  </div>
+                  </div>
+              </div>
+              </CharacterList>
+          );
+        }
+
+        const comicCharacters = this.state.data;
+
+        const mapOfCharacters = [];
+      
+        let button = [];
+        comicCharacters.data.results.map((item, i) => {
+            mapOfCharacters.push(
+              <li className="list-item" key={i}>
+                  <a href="#" className="links"><span
+                    className="male-character">M</span><span
+                    className="character-name">{item.name}</span></a></li>
+            );
+            return true;
+        });
+
+        return (
+          <CharacterList title="Liste des personnages" buttonPrev={this.goTo('prev')} buttonNext={this.goTo('next')}>
+                   { mapOfCharacters }
+          </CharacterList>
+        );
+    }
+}
+
+class Board extends Component {
+    constructor(props) {
+        super(props);
+        this.handleData = this.handleData.bind(this);
+        this.loadCharacter = this.loadCharacter.bind(this);
+        this.state = {
             characterPending: true,
             adversaryPending: true,
             clicked: '',
@@ -125,9 +269,58 @@ class Board extends Component {
             computerWin: null,
             reset: false,
             score: 0,
-            computerScore: 0
+            computerScore: 0,
+            fromChild: ''
         }
     }
+
+     handleData(data) {
+        this.setState({
+           fromChild: data
+        });
+     }
+
+    loadCharacter(name) {
+        return () => {
+            this.setState({
+                characterPending: true,
+                clicked: 'flip-it',
+                reset: true,
+                fighting: false,
+                randomHero: 0,
+                randomAdversary: 0,
+                heroWin: 0
+            }, () => {
+                setTimeout(() => this.setState({ clicked: '' }), 3500)
+            });
+
+            fetch(`http://gateway.marvel.com/v1/public/characters?name=${name}&apikey=c1ac14a35052a29503518fe883970ac7`)
+              .then(response => {
+                  if (!response.ok) {
+                      throw Error("Network request failed")
+                  }
+                  return response;
+              })
+              .then(d => d.json())
+              .then(d => {
+                  this.setState({
+                      characterData: d,
+                      characterPending: false,
+                      adversaryPending: true,
+                      reset: true,
+                      fighting: false,
+                      randomHero: 0,
+                      randomAdversary: 0,
+                      heroWin: 0
+                  })
+              }, () => {
+                  this.setState({
+                      requestFailed: true
+                  })
+              })
+        }
+    }
+
 
     randomAdversary() {
         let randomString = (length, possible) => {
@@ -191,134 +384,7 @@ class Board extends Component {
         }
     }
 
-    loadCharacter(name) {
-        return () => {
-            this.setState({
-                characterPending: true,
-                clicked: 'flip-it',
-                reset: true,
-                fighting: false,
-                randomHero: 0,
-                randomAdversary: 0,
-                heroWin: 0
-            }, () => {
-                setTimeout(() => this.setState({ clicked: '' }), 3500)
-            });
 
-            fetch(`http://gateway.marvel.com/v1/public/characters?name=${name}&apikey=c1ac14a35052a29503518fe883970ac7`)
-              .then(response => {
-                  if (!response.ok) {
-                      throw Error("Network request failed")
-                  }
-                  return response;
-              })
-              .then(d => d.json())
-              .then(d => {
-                  this.setState({
-                      characterData: d,
-                      characterPending: false,
-                      adversaryPending: true,
-                      reset: true,
-                      fighting: false,
-                      randomHero: 0,
-                      randomAdversary: 0,
-                      heroWin: 0
-                  })
-              }, () => {
-                  this.setState({
-                      requestFailed: true
-                  })
-              })
-        }
-    }
-
-    goPrev() {
-        return () => {
-            this.setState({
-                offset: this.state.offset < 26 ? this.state.offset : this.state.offset - 26,
-                pending: true,
-                fighting: false,
-                computerWin: null,
-                characterPending: true,
-                adversaryPending: true,
-                reset: true,
-                heroWin: 0,
-                randomHero: 0,
-                randomAdversary: 0
-            });
-
-            fetch(`http://gateway.marvel.com/v1/public/characters?limit=26&offset=${this.state.offset < 26 ? this.state.offset : this.state.offset - 26}&apikey=c1ac14a35052a29503518fe883970ac7`)
-              .then(response => {
-                  if (!response.ok) {
-                      throw Error("Network request failed")
-                  }
-                  return response;
-              })
-              .then(d => d.json())
-              .then(d => {
-                  this.setState({
-                      data: d,
-                      pending: false,
-                      fighting: false,
-                      computerWin: null,
-                      characterPending: true,
-                      adversaryPending: true,
-                      reset: true,
-                      heroWin: 0,
-                      randomHero: 0,
-                      randomAdversary: 0
-                  })
-              }, () => {
-                  this.setState({
-                      requestFailed: true
-                  })
-              })
-        }
-    }
-
-    goNext() {
-        return () => {
-            this.setState({
-                offset: this.state.offset + 26,
-                pending: true,
-                fighting: false,
-                heroWin: 0,
-                computerWin: 0,
-                characterPending: true,
-                adversaryPending: true,
-                reset: true,
-                randomHero: 0,
-                randomAdversary: 0,
-            });
-
-            fetch(`http://gateway.marvel.com/v1/public/characters?limit=26&offset=${this.state.offset + 26}&apikey=c1ac14a35052a29503518fe883970ac7`)
-              .then(response => {
-                  if (!response.ok) {
-                      throw Error("Network request failed")
-                  }
-                  return response;
-              })
-              .then(d => d.json())
-              .then(d => {
-                  this.setState({
-                      data: d,
-                      pending: false,
-                      fighting: false,
-                      computerWin: null,
-                      characterPending: true,
-                      adversaryPending: true,
-                      reset: true,
-                      heroWin: 0,
-                      randomHero: 0,
-                      randomAdversary: 0
-                  })
-              }, () => {
-                  this.setState({
-                      requestFailed: true
-                  })
-              })
-        }
-    }
 
     getRandomInt(max) {
         return () => {
@@ -359,50 +425,13 @@ class Board extends Component {
         }
     }
 
-    componentDidMount() {
-        fetch('http://gateway.marvel.com/v1/public/characters?limit=26&apikey=c1ac14a35052a29503518fe883970ac7')
-          .then(response => {
-              if (!response.ok) {
-                  throw Error("Network request failed")
-              }
-              return response;
-          })
-          .then(d => d.json())
-          .then(d => {
-              this.setState({
-                  data: d,
-                  pending: false
-              })
-          }, () => {
-              this.setState({
-                  requestFailed: true
-              })
-          })
-    }
-
     render() {
-        if (this.state.requestFailed) {
-            return <p> Failed !</p>;
-        }
-        if (this.state.pending) {
-            return (
-              <div className="loading"><p>..loading...</p>
-                  <div className="lds-interwind">
-                      <div>
-
-                      </div>
-                      <div>
-
-                      </div>
-                  </div>
-              </div>);
-        }
+     
         let num = '';
         let image = '';
         let adversaryImage = '';
         let adversariesCount = '';
 
-        const comicCharacters = this.state.data;
         const oneCharacter = this.state.characterData;
 
         const adversaryCharacter = this.state.adversaryData;
@@ -413,7 +442,6 @@ class Board extends Component {
             adversaryImage = `${adversaryCharacter.data.results[this.state.num].thumbnail.path }.${adversaryCharacter.data.results[this.state.num].thumbnail.extension}`;
         }
 
-        const mapOfCharacters = [];
         const hero = [];
         const heroScore = [];
         const adversaryScore = [];
@@ -421,15 +449,7 @@ class Board extends Component {
         let HeroWin = [];
         let button = [];
         let score = `your score : ${ this.state.score }    |    computer score: ${ this.state.computerScore }`;
-        comicCharacters.data.results.map((item, i) => {
-            mapOfCharacters.push(
-              <li className="list-item" key={i}>
-                  <a href="#" className="links" onClick={this.loadCharacter(item.name)}><span
-                    className="male-character">M</span><span
-                    className="character-name">{item.name}</span></a></li>
-            );
-            return true;
-        });
+      
 
         if (oneCharacter) {
             image = `${oneCharacter.data.results[0].thumbnail.path }.${oneCharacter.data.results[0].thumbnail.extension}`;
@@ -449,12 +469,12 @@ class Board extends Component {
 
             if (this.state.heroWin && this.state.heroWin !== 0) {
                 HeroWin.push(<p className="win-message">You Win !</p>)
-                button.push(<Button onClick={this.playAgain()} class="fight-button again" button="Play again !"/>)
+                button.push(<Button onClick={this.playAgain()} className="fight-button again" button="Play again !"/>)
             }
 
             if (!this.state.heroWin && this.state.heroWin !== 0) {
                 HeroWin.push(<p className="win-message">You Lose !</p>)
-                button.push(<Button onClick={this.playAgain()} class="fight-button again" button="Play again !"/>)
+                button.push(<Button onClick={this.playAgain()} className="fight-button again" button="Play again !"/>)
             }
         }
 
@@ -500,7 +520,7 @@ class Board extends Component {
 
         if (this.state.characterPending) {
             hero.push(
-              <p class="instruction">
+              <p className="instruction">
                   Click on a hero on the left column to choose it !
               </p>)
         } else {
@@ -523,17 +543,7 @@ class Board extends Component {
           <div>
               <Header score={ score }/>
               <div className="board">
-                  <section className="left-column">
-                      <h3>Choose heroes
-                          <Button onClick={this.goNext()} class="title-buttons" button="Next >>"/>
-                          <Button onClick={this.goPrev()} class="title-buttons" button="<< Prev"/>
-                      </h3>
-                      <div>
-                          <ul>
-                              { mapOfCharacters }
-                          </ul>
-                      </div>
-                  </section>
+                  <CharactersComponent/>
                   <section className="right-column">
                       { hero }
                       <div className="button-container">
