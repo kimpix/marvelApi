@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import logo from './marvel.svg';
+import gif from './giphy.gif';
+import humanWin from './you-win.gif';
+import computerWin from './you-lose.gif';
 import fetch from 'node-fetch';
 import CountUp from 'react-countup';
 
@@ -427,33 +430,41 @@ class Board extends Component {
 
     render() {
 
-        let num = '';
+        let name = '';
+        let nameAdversary = '';
         let image = '';
-        let adversaryImage = '';
+        let imageAdversary = '';
+        let description = '';
+        let descriptionAdversary = '';
         let adversariesCount = '';
 
         const oneCharacter = this.state.characterData;
-
         const adversaryCharacter = this.state.adversaryData;
-        if (adversaryCharacter) {
-            adversariesCount = adversaryCharacter.data.results.length;
-            this.getRandomInt(adversariesCount);
 
-            adversaryImage = `${adversaryCharacter.data.results[this.state.num].thumbnail.path }.${adversaryCharacter.data.results[this.state.num].thumbnail.extension}`;
-        }
-
-        const hero = [];
-        const heroScore = [];
-        const adversaryScore = [];
-        const adversary = [];
-        let HeroWin = [];
-        let button = [];
-        let score = `your score : ${ this.state.score }    |    computer score: ${ this.state.computerScore }`;
+        const sectionClass = `image-container ${ this.state.clicked }`;
+        const sectionAdversaryClass = `image-container ${ this.state.clickedAdversary }`;
 
 
         if (oneCharacter) {
+            name = oneCharacter.data.results[0].name;
             image = `${oneCharacter.data.results[0].thumbnail.path }.${oneCharacter.data.results[0].thumbnail.extension}`;
+            description = oneCharacter.data.results[0].description;
         }
+
+
+        if (adversaryCharacter) {
+            adversariesCount = adversaryCharacter.data.results.length;
+            this.getRandomInt(adversariesCount);
+            nameAdversary = adversaryCharacter.data.results[this.state.num].name
+            imageAdversary = `${adversaryCharacter.data.results[this.state.num].thumbnail.path }.${adversaryCharacter.data.results[this.state.num].thumbnail.extension}`;
+            descriptionAdversary = adversaryCharacter.data.results[this.state.num].description;
+        }
+
+        const heroScore = [];
+        const adversaryScore = [];
+        let HeroWin = [];
+        let score = `your score : ${ this.state.score }    |    computer score: ${ this.state.computerScore }`;
+
 
         if (this.state.fighting) {
             const that = this;
@@ -466,16 +477,6 @@ class Board extends Component {
                     that.calculateWinner(scoreH, scoreC);
                 }, 3000);
             }
-
-            if (this.state.heroWin && this.state.heroWin !== 0) {
-                HeroWin.push(<p className="win-message">You Win !</p>)
-                button.push(<Button onClick={this.playAgain()} className="fight-button again" button="Play again !"/>)
-            }
-
-            if (!this.state.heroWin && this.state.heroWin !== 0) {
-                HeroWin.push(<p className="win-message">You Lose !</p>)
-                button.push(<Button onClick={this.playAgain()} className="fight-button again" button="Play again !"/>)
-            }
         }
 
 
@@ -484,60 +485,6 @@ class Board extends Component {
             HeroWin.push();
         }
 
-        const sectionClass = `image-container ${ this.state.clicked }`
-        const sectionAdversaryClass = `image-container ${ this.state.clickedAdversary }`
-
-        if (this.state.adversaryPending) {
-            if (!this.state.characterPending) {
-                button.push(
-                  <div>
-                      <Button onClick={this.randomAdversary()} class="fight-button random" button="Random adversary"/>
-                  </div>)
-            }
-        } else {
-            if (!this.state.fighting) {
-                button.push(
-                  <Button class="fight-button" onClick={this.fight(100)} button="Fight !"/>
-                );
-            } else if (this.state.fighting) {
-                button.push(
-                );
-            }
-
-            adversary.push(
-              <div className="adversary-container">
-                  { adversaryScore }
-                  <div className="adversary">
-                      <div className={ sectionAdversaryClass }>
-                          <img src={adversaryImage}/>
-                      </div>
-                      <h4>{ adversaryCharacter.data.results[this.state.num].name }</h4>
-                      <p className="description"> { adversaryCharacter.data.results[this.state.num].description }</p>
-                  </div>
-              </div>
-            );
-        }
-
-        if (this.state.characterPending) {
-            hero.push(
-              <p className="instruction">
-                  Click on a hero on the left column to choose it !
-              </p>)
-        } else {
-            hero.push(
-              <div className="fighter-one-container">
-                  { heroScore }
-                  <div className="fighter-one">
-                      <div className={ sectionClass }>
-                          <img src={image}/>
-                      </div>
-                      <h4>{ oneCharacter.data.results[0].name }</h4>
-                      <p className="description">  { oneCharacter.data.results[0].description }</p>
-                      { HeroWin }
-                  </div>
-              </div>
-            );
-        }
 
         const loadCharacter = this.loadCharacter;
 
@@ -546,16 +493,164 @@ class Board extends Component {
               <Header score={ score }/>
               <div className="board">
                   <CharactersComponent loadCharacter={loadCharacter.bind(this)}/>
-                  <section className="right-column">
-                      { hero }
-                      <div className="button-container">
-                          { button }
-                      </div>
-                      { adversary }
-                  </section>
+                  <FightingZoneComponent>
+                      <PlayerOneCharacter
+                        name={name}
+                        description={description}
+                        image={image}
+                        class={sectionClass}
+                        isPending={this.state.characterPending}
+                        score={heroScore}
+                      />
+                      <FightButton
+                        isPlayerTwoPending={this.state.adversaryPending}
+                        isPlayerOnePending={this.state.characterPending}
+                        isPlayerOneTheWinner={this.state.heroWin}
+                        isFighting={this.state.fighting}
+                        randomAdversary={this.randomAdversary()}
+                        fight={this.fight(100)}
+                        playAgain={this.playAgain()}
+                      />
+                      <PlayerTwoCharacter
+                        name={nameAdversary}
+                        description={descriptionAdversary}
+                        image={imageAdversary}
+                        class={sectionAdversaryClass}
+                        isPending={this.state.adversaryPending}
+                        score={adversaryScore}
+                      />
+                  </FightingZoneComponent>
               </div>
           </div>
         );
+    }
+}
+
+class FightingZoneComponent extends Component {
+    render() {
+        return (
+          <section className="right-column">
+              { this.props.children }
+          </section>
+        );
+    }
+}
+
+class FightButton extends Component {
+    render() {
+        let button = [];
+        let playerOneWin = this.props.isPlayerOneTheWinner;
+        let isFighting = this.props.isFighting;
+
+        if (this.props.isPlayerTwoPending) {
+            if (!this.props.isPlayerOnePending) {
+                button.push(
+                  <Button
+                    onClick={ this.props.randomAdversary }
+                    class="fight-button random"
+                    button="Random adversary"
+                  />
+                )
+            }
+        } else {
+            if (!isFighting) {
+                button.push(
+                  <Button
+                    class="fight-button"
+                    onClick={ this.props.fight }
+                    button="Fight !"
+                  />
+                );
+            } else if (isFighting) {
+                button.push(
+                  <img src={gif} className="App-gif"/>
+                );
+
+                if (playerOneWin && playerOneWin !== 0) {
+                    button = [];
+                    button.push(
+                      <div className="winner-container">
+                          <p id="winner-paragraph">YOU WIN !</p>
+                          <img src={humanWin} className="App-gif App-gif--small"/>
+                          <Button
+                            onClick={ this.props.playAgain }
+                            class="fight-button again again--winner"
+                            button="Play again !"
+                          />
+                      </div>)
+                }
+
+                if (!playerOneWin && playerOneWin !== 0) {
+                    button = [];
+                    button.push(
+                      <div className="winner-container">
+                          <p id="winner-paragraph">YOU LOSE !</p>
+                          <img src={computerWin} className="App-gif App-gif--small"/>
+                          <Button
+                            onClick={this.props.playAgain}
+                            class="fight-button again"
+                            button="Play again !"
+                          />
+                      </div>)
+                }
+            }
+        }
+
+        return (<div>{button}</div>)
+    }
+}
+
+class PlayerOneCharacter extends Component {
+    render() {
+        const hero = [];
+
+        if (this.props.isPending) {
+            hero.push(
+              <p className="instruction">
+                  Click on a hero on the left column to choose it !
+              </p>)
+        } else {
+            hero.push(
+              <div className="fighter-one-container">
+                  { this.props.score }
+                  <div className="fighter-one">
+                      <div className={ this.props.class }>
+                          <img src={ this.props.image }/>
+                      </div>
+                      <h4>{ this.props.name }</h4>
+                      <p className="description">{ this.props.description }</p>
+                  </div>
+              </div>
+            );
+        }
+
+        return (<div>{hero}</div>)
+    }
+}
+
+
+class PlayerTwoCharacter extends Component {
+    render() {
+        const adversary = [];
+
+        if (!this.props.isPending) {
+            adversary.push(
+              <div className="adversary-container">
+                  { this.props.score }
+                  <div className="adversary">
+                      <div className={ this.props.class }>
+                          <img src={this.props.image}/>
+                      </div>
+                      <h4>{ this.props.name }</h4>
+                      <p className="description">
+                          { this.props.description }
+                      </p>
+                  </div>
+              </div>);
+        }
+
+
+        return (<div>{adversary}</div>)
     }
 }
 

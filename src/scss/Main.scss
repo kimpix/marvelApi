@@ -255,6 +255,7 @@
     }
 
     &.random {
+        margin-left: -45px;
         @include laptop() {
 
         }
@@ -262,6 +263,13 @@
     }
 
     &.again {
+        margin-left: -15px;
+        margin-top: 250px;
+
+        &--winner {
+            margin-top: 345px;
+        }
+
         @include laptop() {
         }
 
@@ -297,6 +305,23 @@
     height: 500px;
     float: left;
 }
+
+.winner-container {
+    width: 250px;
+    position: absolute;
+    margin-left: 38%;
+    margin-top: -135px;
+
+    p#winner-paragraph {
+        width: 150px;
+        margin-left: 5px;
+        margin-bottom: 5px;
+        font-size: 41px;
+    }
+}
+
+
+
 
 .hero-score {
     @include laptop() {
