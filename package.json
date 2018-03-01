@@ -16,7 +16,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "build-css": "node-sass --output-style compressed src/scss/index.scss > src/css/index.css",
+    "build-css": "node-sass --output-style compressed src/scss/index.scss > src/scss/index.css",
     "build-webpack": "webpack --config webpack.config.js",
     "watch": "nodemon -e scss -x \"npm run build-css\""
   },

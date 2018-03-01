@@ -103,16 +103,16 @@ class Footer extends Component {
 class CharacterList extends Component {
     render() {
         return (
-                <section className="left-column">
-                    <h3>{this.props.title}
-                        <Button onClick={this.props.buttonNext} class="title-buttons" button="Next >>"/>
-                        <Button onClick={this.props.buttonPrev} class="title-buttons" button="<< Prev"/>
-                    </h3>
-                    <ul>
-                        {this.props.children}
-                    </ul>
-                </section>
-                )
+          <section className="left-column">
+              <h3>{this.props.title}
+                  <Button onClick={this.props.buttonNext} class="title-buttons" button="Next >>"/>
+                  <Button onClick={this.props.buttonPrev} class="title-buttons" button="<< Prev"/>
+              </h3>
+              <ul>
+                  {this.props.children}
+              </ul>
+          </section>
+        )
     }
 }
 
@@ -123,7 +123,7 @@ const Button = (props) => {
 };
 
 class CharactersComponent extends Component {
-   constructor(props) {
+    constructor(props) {
         super(props);
         this.state = {
             requestFailed: false,
@@ -134,37 +134,37 @@ class CharactersComponent extends Component {
     }
 
     componentDidMount() {
-         this.fetchInitial();
+        this.fetchInitial();
     }
 
 
     fetchInitial() {
         let urlInitial = 'http://gateway.marvel.com/v1/public/characters?limit=26&apikey=c1ac14a35052a29503518fe883970ac7';
-         fetch(urlInitial)
-            .then(response => {
-                if (!response.ok) {
-                    throw Error("Network request failed")
-                }
-                return response;
-            })
-            .then(d => d.json())
-            .then(d => {
-                this.setState({
-                    data: d,
-                    pending: false
-                })
-            }, () => {
-                this.setState({
-                    requestFailed: true
-                })
-            })
-        }
+        fetch(urlInitial)
+          .then(response => {
+              if (!response.ok) {
+                  throw Error("Network request failed")
+              }
+              return response;
+          })
+          .then(d => d.json())
+          .then(d => {
+              this.setState({
+                  data: d,
+                  pending: false
+              })
+          }, () => {
+              this.setState({
+                  requestFailed: true
+              })
+          })
+    }
 
     goTo(direction) {
-      let parameter = (direction === 'prev') ? (this.state.offset < 26 ? this.state.offset : this.state.offset - 26 ): this.state.offset + 26;
-      let urlGoTO = `http://gateway.marvel.com/v1/public/characters?limit=26&offset=${parameter}}&apikey=c1ac14a35052a29503518fe883970ac7`;
+        let parameter = (direction === 'prev') ? (this.state.offset < 26 ? this.state.offset : this.state.offset - 26 ) : this.state.offset + 26;
+        let urlGoTO = `http://gateway.marvel.com/v1/public/characters?limit=26&offset=${parameter}}&apikey=c1ac14a35052a29503518fe883970ac7`;
 
-      return () => {
+        return () => {
             this.setState({
                 offset: parameter,
                 pending: true,
@@ -211,31 +211,33 @@ class CharactersComponent extends Component {
 
 
         if (this.state.requestFailed) {
-          <CharacterList title="Liste des personnages" buttonPrev={this.goTo('prev')} buttonNext={this.goTo('next')}>
-              <p> Failed !</p>;
-          </CharacterList>
+            return (
+              <CharacterList title="Liste des personnages" buttonPrev={this.goTo('prev')}
+                             buttonNext={this.goTo('next')}>
+                  <p> Failed !</p>;
+              </CharacterList>
+            )
         }
         if (this.state.pending) {
             return (
-              <CharacterList title="Liste des personnages" buttonPrev={this.goTo('prev')} buttonNext={this.goTo('next')}>
+              <CharacterList title="Liste des personnages" buttonPrev={this.goTo('prev')}
+                             buttonNext={this.goTo('next')}>
                   <div className="loading"><p>..loading...</p>
                       <div className="lds-interwind">
-                      <div>  </div>
-                      <div>  </div>
+                          <div></div>
+                          <div></div>
+                      </div>
                   </div>
-              </div>
               </CharacterList>
-          );
+            );
         }
 
         const comicCharacters = this.state.data;
 
         const mapOfCharacters = [];
-      
-        let button = [];
         comicCharacters.data.results.map((item, i) => {
             mapOfCharacters.push(
-              <li className="list-item" key={i}>
+              <li className="list-item" key={i} onClick={this.props.loadCharacter(item.name)}>
                   <a href="#" className="links"><span
                     className="male-character">M</span><span
                     className="character-name">{item.name}</span></a></li>
@@ -245,7 +247,7 @@ class CharactersComponent extends Component {
 
         return (
           <CharacterList title="Liste des personnages" buttonPrev={this.goTo('prev')} buttonNext={this.goTo('next')}>
-                   { mapOfCharacters }
+              { mapOfCharacters }
           </CharacterList>
         );
     }
@@ -254,8 +256,7 @@ class CharactersComponent extends Component {
 class Board extends Component {
     constructor(props) {
         super(props);
-        this.handleData = this.handleData.bind(this);
-        this.loadCharacter = this.loadCharacter.bind(this);
+        const loadCharacter = this.loadCharacter.bind(this);
         this.state = {
             characterPending: true,
             adversaryPending: true,
@@ -274,11 +275,11 @@ class Board extends Component {
         }
     }
 
-     handleData(data) {
+    handleData(data) {
         this.setState({
-           fromChild: data
+            fromChild: data
         });
-     }
+    }
 
     loadCharacter(name) {
         return () => {
@@ -385,7 +386,6 @@ class Board extends Component {
     }
 
 
-
     getRandomInt(max) {
         return () => {
             this.setState({
@@ -426,7 +426,7 @@ class Board extends Component {
     }
 
     render() {
-     
+
         let num = '';
         let image = '';
         let adversaryImage = '';
@@ -449,7 +449,7 @@ class Board extends Component {
         let HeroWin = [];
         let button = [];
         let score = `your score : ${ this.state.score }    |    computer score: ${ this.state.computerScore }`;
-      
+
 
         if (oneCharacter) {
             image = `${oneCharacter.data.results[0].thumbnail.path }.${oneCharacter.data.results[0].thumbnail.extension}`;
@@ -539,15 +539,17 @@ class Board extends Component {
             );
         }
 
+        const loadCharacter = this.loadCharacter;
+
         return (
           <div>
               <Header score={ score }/>
               <div className="board">
-                  <CharactersComponent/>
+                  <CharactersComponent loadCharacter={loadCharacter.bind(this)}/>
                   <section className="right-column">
                       { hero }
                       <div className="button-container">
-                      { button }
+                          { button }
                       </div>
                       { adversary }
                   </section>
