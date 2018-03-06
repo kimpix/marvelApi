@@ -17,14 +17,19 @@ module.exports = {
                 loader: 'babel-loader',
                 query: {
                 presets: ['react', 'es2015']
-                }
+            }
             },{
-                test: /\.scss$/,
-                include: [
-                    path.resolve(__dirname, 'node_modules'),
-                    path.resolve(__dirname, 'src/scss'),
+                test: /\.(scss|css)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: 'index.css',
+                            outputPath: './'
+                        }
+                    },
+                    { loader: 'sass-loader' },
                 ],
-                use: ExtractTextPlugin.extract(['css-loader', 'sass-loader', 'import-glob-loader']),
             },
             {
                 test: /\.(ico|jpe?g|png|gif|svg)$/,
