@@ -1,147 +1,19 @@
 import React, { Component } from 'react';
 import Header from './Header';
-import Button from './Button';
+import FightingZoneComponent from './FightingZone';
+import FightButton from './FightingButton';
 import CharactersComponent from './Characters';
+import PlayerOneCharacter from './PlayerOne';
+import PlayerTwoCharacter from './PlayerTwo';
 import fetch from 'node-fetch';
 import CountUp from 'react-countup';
-import gif from './giphy.gif';
-import humanWin from './you-win.gif';
-import computerWin from './you-lose.gif';
-
-
-class FightingZoneComponent extends Component {
-    render() {
-        return (
-          <section className="right-column">
-              { this.props.children }
-          </section>
-        );
-    }
-}
-
-class FightButton extends Component {
-    render() {
-        let button = [];
-        let playerOneWin = this.props.isPlayerOneTheWinner;
-        let isFighting = this.props.isFighting;
-
-        if (this.props.isPlayerTwoPending) {
-            if (!this.props.isPlayerOnePending) {
-                button.push(
-                  <Button
-                    onClick={ this.props.randomAdversary }
-                    class="fight-button random"
-                    button="Random adversary"
-                  />
-                )
-            }
-        } else {
-            if (!isFighting) {
-                button.push(
-                  <Button
-                    class="fight-button"
-                    onClick={ this.props.fight }
-                    button="Fight !"
-                  />
-                );
-            } else if (isFighting) {
-                button.push(
-                  <img src={gif} className="App-gif"/>
-                );
-
-                if (playerOneWin && playerOneWin !== 0) {
-                    button = [];
-                    button.push(
-                      <div className="winner-container">
-                          <p id="winner-paragraph">YOU WIN !</p>
-                          <img src={humanWin} className="App-gif App-gif--small"/>
-                          <Button
-                            onClick={ this.props.playAgain }
-                            class="fight-button again again--winner"
-                            button="Play again !"
-                          />
-                      </div>)
-                }
-
-                if (!playerOneWin && playerOneWin !== 0) {
-                    button = [];
-                    button.push(
-                      <div className="winner-container">
-                          <p id="winner-paragraph">YOU LOSE !</p>
-                          <img src={computerWin} className="App-gif App-gif--small"/>
-                          <Button
-                            onClick={this.props.playAgain}
-                            class="fight-button again"
-                            button="Play again !"
-                          />
-                      </div>)
-                }
-            }
-        }
-
-        return (<div>{button}</div>)
-    }
-}
-
-class PlayerOneCharacter extends Component {
-    render() {
-        const hero = [];
-
-        if (this.props.isPending) {
-            hero.push(
-              <p className="instruction">
-                  Click on a hero on the left column to choose it !
-              </p>)
-        } else {
-            hero.push(
-              <div className="fighter-one-container">
-                  { this.props.score }
-                  <div className="fighter-one">
-                      <div className={ this.props.class }>
-                          <img src={ this.props.image }/>
-                      </div>
-                      <h4>{ this.props.name }</h4>
-                      <p className="description">{ this.props.description }</p>
-                  </div>
-              </div>
-            );
-        }
-
-        return (<div>{hero}</div>)
-    }
-}
-
-
-class PlayerTwoCharacter extends Component {
-    render() {
-        const adversary = [];
-
-        if (!this.props.isPending) {
-            adversary.push(
-              <div className="adversary-container">
-                  { this.props.score }
-                  <div className="adversary">
-                      <div className={ this.props.class }>
-                          <img src={this.props.image}/>
-                      </div>
-                      <h4>{ this.props.name }</h4>
-                      <p className="description">
-                          { this.props.description }
-                      </p>
-                  </div>
-              </div>);
-        }
-
-
-        return (<div>{adversary}</div>)
-    }
-}
 
 
 class Board extends Component {
     constructor(props) {
         super(props);
         const loadCharacter = this.loadCharacter.bind(this);
+        this.randomAdversary = this.randomAdversary.bind(this);
         this.state = {
             characterPending: true,
             adversaryPending: true,
@@ -156,7 +28,8 @@ class Board extends Component {
             reset: false,
             score: 0,
             computerScore: 0,
-            fromChild: ''
+            fromChild: '',
+            className: 'fight-button'
         }
     }
 
@@ -215,6 +88,7 @@ class Board extends Component {
 
         return () => {
             this.setState({
+                className: 'fight-button',
                 adversaryPending: true,
                 clickedAdversary: 'flip-it',
                 randomHero: 0,
@@ -253,6 +127,7 @@ class Board extends Component {
     playAgain() {
         return () => {
             this.setState({
+                classDatas : "fight-button again",
                 characterPending: false,
                 adversaryPending: true,
                 reset: true,
@@ -276,6 +151,7 @@ class Board extends Component {
     fight(max) {
         return () => {
             this.setState({
+                classDatas : "fight-button again again--winner",
                 fighting: true,
                 randomHero: Math.floor(Math.random() * Math.floor(max)),
                 randomAdversary: Math.floor(Math.random() * Math.floor(max)),
@@ -286,7 +162,6 @@ class Board extends Component {
 
     calculateWinner(hero, computer) {
         if (hero > computer && this.state.heroWin === 0) {
-            console.log('toto');
             this.setState({
                 heroWin: true,
                 computerWin: false,
@@ -295,7 +170,6 @@ class Board extends Component {
         }
 
         if (hero < computer && this.state.heroWin === 0) {
-            console.log('toto');
             this.setState({
                 heroWin: false,
                 computerWin: true,
@@ -383,9 +257,10 @@ class Board extends Component {
                         isPlayerOnePending={this.state.characterPending}
                         isPlayerOneTheWinner={this.state.heroWin}
                         isFighting={this.state.fighting}
-                        randomAdversary={this.randomAdversary()}
+                        randomAdversary={()=>this.randomAdversary()}
                         fight={this.fight(100)}
                         playAgain={this.playAgain()}
+                        classDatas={this.state.className}
                       />
                       <PlayerTwoCharacter
                         name={nameAdversary}

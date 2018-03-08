@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button render 1`] = `
+<div>
+  <Header
+    score="your score : 0    |    computer score: 0"
+  />
+  <div
+    className="board"
+  >
+    <CharactersComponent
+      loadCharacter={[Function]}
+    />
+    <FightingZoneComponent>
+      <PlayerOneCharacter
+        class="image-container "
+        description=""
+        image=""
+        isPending={true}
+        name=""
+        score={Array []}
+      />
+      <FightButton
+        classDatas="fight-button"
+        fight={[Function]}
+        isFighting={false}
+        isPlayerOnePending={true}
+        isPlayerOneTheWinner={0}
+        isPlayerTwoPending={true}
+        playAgain={[Function]}
+        randomAdversary={[Function]}
+      />
+      <PlayerTwoCharacter
+        class="image-container "
+        description=""
+        image=""
+        isPending={true}
+        name=""
+        score={Array []}
+      />
+    </FightingZoneComponent>
+  </div>
+</div>
+`;

@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from './Button';
+import Button from '../Button';
 
 
 test('Button render', (props ={}) => {
@@ -32,3 +32,4 @@ test('render button text', (props ={}) => {
 
     expect(dom).toEqual('infinite is the way');
 });
+

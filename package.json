@@ -84,6 +84,7 @@
     ],
     "setupFiles": [
       "./test/jestsetup.js"
-    ]
+    ],
+    "testURL" : "https://gateway.marvel.com:443/v1/public/characters?apikey=c1ac14a35052a29503518fe883970ac7"
   }
 }

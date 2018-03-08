@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Link Element rendering 1`] = `
+<div>
+  <Button
+    button="Fight !"
+    onClick={[Function]}
+  />
+</div>
+`;
