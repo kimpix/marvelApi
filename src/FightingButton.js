@@ -5,10 +5,10 @@ import humanWin from './you-win.gif';
 import computerWin from './you-lose.gif';
 
 class FightButton extends Component {
-    constructor(props) {
+     constructor(props) {
         super(props);
         this.state = {
-            className: 'fight-button random'
+            className: ''
         }
      }
 
@@ -21,18 +21,18 @@ class FightButton extends Component {
             if (!this.props.isPlayerOnePending) {
                 button.push(
                   <Button
-                    onClick={ () => this.props.randomAdversary(this.setState({className:'fight-button'}))}
-                    class={this.props.classDatas}
+                    onClick={ () => { this.props.randomAdversary()}}
+                    class='fight-button random'
                     button="Random adversary"
                   />
                 )
             }
         } else {
-            if (!isFighting) {                
+            if (!isFighting) {   
                 button.push(
                   <Button
-                    class={this.props.classDatas}
-                    onClick={ ()=>this.props.fight(this.setState({className:'fight-button again'}))}
+                    class='fight-button'
+                    onClick={ ()=>this.props.fight() }
                     button="Fight !"
                   />
                 );
@@ -48,8 +48,8 @@ class FightButton extends Component {
                           <p id="winner-paragraph">YOU WIN !</p>
                           <img src={humanWin} className="App-gif App-gif--small"/>
                           <Button
-                            onClick={ ()=>this.props.playAgain() }
-                            class={this.props.classDatas}
+                            onClick={ ()=>this.props.playAgain()}
+                            class='fight-button again again--winner'
                             button="Play again !"
                           />
                       </div>)
@@ -63,7 +63,7 @@ class FightButton extends Component {
                           <img src={computerWin} className="App-gif App-gif--small"/>
                           <Button
                             onClick={()=>this.props.playAgain()}
-                            class={ this.props.classDatas }
+                            class='fight-button again'
                             button="Play again !"
                           />
                       </div>)

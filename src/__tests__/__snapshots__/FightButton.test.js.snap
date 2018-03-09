@@ -4,6 +4,7 @@ exports[`Link Element rendering 1`] = `
 <div>
   <Button
     button="Fight !"
+    class="fight-button"
     onClick={[Function]}
   />
 </div>

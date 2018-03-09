@@ -18,26 +18,52 @@ describe('Link', function() {
 	});
 });
 
-describe('Button', function() {
-	test('is clicked when player two is pending', (props ={}) => {
+describe('Button', function () {
+	it('is first time on the board', () => {
         const mockRandomAdv = sinon.spy();
-        const mockClass = sinon.spy();
 
-	    const tree = mount(
+	    const tree = shallow(
 	      <FightButton  
-	                    button="Random adversary"
 	                    isPlayerTwoPending={true}
 	                    isPlayerOnePending={false}
 	                    randomAdversary={mockRandomAdv}
-	                    classDatas={mockClass}
-
+	                    class
 	       />
 	    );
+       expect(tree.find('Button').props().class).toEqual('fight-button random');      
+      // expect(mockRandomAdv.calledOnce).toEqual(true);
+	});
+});
 
-       tree.find('Button').simulate('click');
-       expect(mockRandomAdv.calledOnce).toEqual(true);
-        
-       tree.update();
-	   expect(tree.state().className).toEqual('fight-button');
+describe('Button', function () {
+	it('is as already been clicked', () => {
+        const mockRandomAdv = sinon.spy();
+
+	    const tree = shallow(
+	      <FightButton  
+	                    isPlayerTwoPending={false}
+	                    fight={mockRandomAdv}
+	                    class
+	       />
+	    );
+  
+      expect(tree.find('Button').props().class).toEqual('fight-button');      
+	});
+});
+
+describe('Button', function () {
+	it('is displayed when player one wins', () => {
+        const mockRandomAdv = sinon.spy();
+
+	    const tree = shallow(
+	      <FightButton  
+	                    isFighting={true}
+	                    playAgain={mockRandomAdv}
+	                    isPlayerOneTheWinner={true}
+	                    class
+	       />
+	    );
+  
+      expect(tree.find('Button').props().class).toEqual('fight-button again again--winner');      
 	});
 });

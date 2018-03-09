@@ -21,7 +21,6 @@ exports[`Button render 1`] = `
         score={Array []}
       />
       <FightButton
-        classDatas="fight-button"
         fight={[Function]}
         isFighting={false}
         isPlayerOnePending={true}

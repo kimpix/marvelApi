@@ -88,7 +88,6 @@ class Board extends Component {
 
         return () => {
             this.setState({
-                className: 'fight-button',
                 adversaryPending: true,
                 clickedAdversary: 'flip-it',
                 randomHero: 0,
@@ -257,10 +256,9 @@ class Board extends Component {
                         isPlayerOnePending={this.state.characterPending}
                         isPlayerOneTheWinner={this.state.heroWin}
                         isFighting={this.state.fighting}
-                        randomAdversary={()=>this.randomAdversary()}
+                        randomAdversary={this.randomAdversary()}
                         fight={this.fight(100)}
                         playAgain={this.playAgain()}
-                        classDatas={this.state.className}
                       />
                       <PlayerTwoCharacter
                         name={nameAdversary}
