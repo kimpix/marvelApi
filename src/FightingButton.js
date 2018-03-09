@@ -7,9 +7,6 @@ import computerWin from './you-lose.gif';
 class FightButton extends Component {
      constructor(props) {
         super(props);
-        this.state = {
-            className: ''
-        }
      }
 
     render() {
